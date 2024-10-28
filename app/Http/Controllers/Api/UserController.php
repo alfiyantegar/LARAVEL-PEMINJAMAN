@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
 
+
 class UserController extends Controller
 {
     public function index()
@@ -27,7 +28,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'password' => $request->password,
             'role' => $request->role,
         ]);
 
@@ -35,21 +36,28 @@ class UserController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $user = Auth::user();
-            $token = $user->createToken('YourAppName')->plainTextToken;
+    // Mencari pengguna berdasarkan email
+    $user = User::where('email', $request->email)->first();
 
-            return response()->json(['token' => $token]);
-        }
+    // Cek jika user ditemukan dan password cocok
+    if ($user && $user->password === $request->password) {
+        // Membuat token untuk pengguna
+        $token = $user->createToken('MyAppToken')->plainTextToken;
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        // Mengembalikan token sebagai respons
+        return response()->json(['token' => $token], 200);
     }
+
+    return response()->json(['error' => 'Unauthorized'], 401);
+}
+
+
 
     public function logout(Request $request)
     {

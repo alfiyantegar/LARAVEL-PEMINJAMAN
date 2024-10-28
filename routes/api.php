@@ -2,11 +2,17 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\DaftarBarangController;
+use App\Http\Controllers\Api\RiwayatPeminjamanController;
 
-Route::get('/login', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Rute login
+Route::post('/login', [UserController::class, 'login']);
 
-Route::apiResource('/user', App\Http\Controllers\Api\UserController::class);
-Route::apiResource('/daftarbarang', App\Http\Controllers\Api\DaftarBarangController::class);
-Route::apiResource('/riwayatpeminjaman', App\Http\Controllers\Api\RiwayatPeminjamanController::class);
+// Rute logout (jika diperlukan)
+Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+
+// API resources
+Route::apiResource('/user', UserController::class);
+Route::apiResource('/daftarbarang', DaftarBarangController::class);
+Route::apiResource('/riwayatpeminjaman', RiwayatPeminjamanController::class);
