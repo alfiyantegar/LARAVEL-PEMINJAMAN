@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserResource;
-
 
 class UserController extends Controller
 {
     public function index()
     {
-        return User::all();
+        return UserResource::collection(User::all());
     }
 
     public function store(Request $request)
@@ -28,11 +28,11 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password,
+            'password' => Hash::make($request->password), // Hash password
             'role' => $request->role,
         ]);
 
-        return response()->json($user, 201);
+        return response()->json(new UserResource($user), 201);
     }
 
     public function login(Request $request)
@@ -45,18 +45,24 @@ class UserController extends Controller
     // Mencari pengguna berdasarkan email
     $user = User::where('email', $request->email)->first();
 
-    // Cek jika user ditemukan dan password cocok
-    if ($user && $user->password === $request->password) {
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404); // Logika jika pengguna tidak ditemukan
+    }
+
+    // Cek jika password cocok
+    if (Hash::check($request->password, $user->password)) {
         // Membuat token untuk pengguna
         $token = $user->createToken('MyAppToken')->plainTextToken;
 
-        // Mengembalikan token sebagai respons
-        return response()->json(['token' => $token], 200);
+        // Mengembalikan token dan data pengguna sebagai respons
+        return response()->json([
+            'token' => $token,
+            'user' => new UserResource($user),
+        ], 200);
     }
 
     return response()->json(['error' => 'Unauthorized'], 401);
 }
-
 
 
     public function logout(Request $request)
@@ -67,7 +73,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        return $user;
+        return new UserResource($user);
     }
 
     public function update(Request $request, User $user)
@@ -80,7 +86,7 @@ class UserController extends Controller
 
         $user->update($request->all());
 
-        return response()->json($user, 200);
+        return response()->json(new UserResource($user), 200);
     }
 
     public function destroy(User $user)
