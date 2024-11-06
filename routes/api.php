@@ -7,13 +7,13 @@ use App\Http\Controllers\Api\DaftarBarangController;
 use App\Http\Controllers\Api\RiwayatPeminjamanController;
 
 // Rute login
-Route::post('/login', [UserController::class, 'login']);
-Route::get('/login', [UserController::class, 'login']);
+Route::match(['get', 'post'], '/login', [UserController::class, 'login']);
 
-// Rute logout (jika diperlukan)
-Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+// Rute logout
+Route::post('/logout', [UserController::class, 'logout']);
 
 // API resources
 Route::apiResource('/user', UserController::class);
 Route::apiResource('/daftarbarang', DaftarBarangController::class);
 Route::apiResource('/riwayatpeminjaman', RiwayatPeminjamanController::class);
+

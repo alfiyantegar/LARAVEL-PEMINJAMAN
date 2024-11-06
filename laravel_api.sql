@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 28, 2024 at 09:50 AM
+-- Generation Time: Nov 06, 2024 at 03:15 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -159,7 +159,7 @@ CREATE TABLE `password_reset_tokens` (
 CREATE TABLE `personal_access_tokens` (
   `id` bigint(20) NOT NULL,
   `tokenable_type` varchar(255) NOT NULL,
-  `tokenable_id` bigint(20) NOT NULL,
+  `tokenable_id` bigint(20) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
   `token` varchar(64) NOT NULL,
   `abilities` text DEFAULT NULL,
@@ -168,6 +168,16 @@ CREATE TABLE `personal_access_tokens` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `personal_access_tokens`
+--
+
+INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
+(1, 'App\\Models\\User', NULL, 'MyAppToken', 'e7ab0946055f690319b3bced21ca6791a6f3ccaaec1b73f8d8e609646fe0b764', '[\"*\"]', NULL, NULL, '2024-11-03 23:44:25', '2024-11-03 23:44:25'),
+(2, 'App\\Models\\User', NULL, 'MyAppToken', '69cd653949a3c41adb31266cfa82f42b935684fd46812f2a79b89136be06d900', '[\"*\"]', NULL, NULL, '2024-11-03 23:46:46', '2024-11-03 23:46:46'),
+(3, 'App\\Models\\User', NULL, 'MyAppToken', '52e5846fa756230bdcbdef145c287c93c551d8d318e07a79d7414fa007f64a8f', '[\"*\"]', NULL, NULL, '2024-11-03 23:54:00', '2024-11-03 23:54:00'),
+(4, 'App\\Models\\User', NULL, 'MyAppToken', '5b5b8d5211e34e98956a8267c030f49cce6e0ada0e1a298a61241214fcb1ee75', '[\"*\"]', NULL, NULL, '2024-11-05 19:00:37', '2024-11-05 19:00:37');
 
 -- --------------------------------------------------------
 
@@ -208,6 +218,8 @@ CREATE TABLE `sessions` (
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
 ('s8K56VYSsEV78y4EdATFjOTppYIZWtImoiNJtKzV', NULL, '127.0.0.1', 'PostmanRuntime/7.34.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUGpOMUxaT0pWSDZSSERpQ0h2NWp4ZWZxM2RMS0JRbHhDOGpTQWtpQyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1730101626),
+('vnId24LmcRNrahZ7SavIUCq58xpgCaU32cHVk5ow', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Avast/129.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNkpaQmJrRGVXTzcwRDR0eVl1RlZmZmtKaFh2aHEweVF3bm91ZDMyVSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1730856393),
+('vSzxlzV2E0sb4Q56C16ikmfVY9I4fyRYALKfkhz7', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Avast/129.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZjd4RFY3OGc1ZUVXbUNQdFBHeVhRTmFDVUVibEVaMFQ4Y05BTHZvaiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1730703158),
 ('YtBHOghMYA3ec8he76mQQNyAdyKf87sUcWvzVfpY', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRzRSSFU2RzlwOW5tZXN5UTk4SzF3ZUVWNDFJVUFFSm1yQmhJUVFZaSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1729855799);
 
 -- --------------------------------------------------------
@@ -233,7 +245,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`iduser`, `name`, `email`, `email_verified_at`, `password`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Alfiyan', 'tegarsh1@gmail.com', NULL, '12345678', 'admin', NULL, NULL, NULL);
+(1, 'Alfiyan', 'tegarsh1@gmail.com', NULL, '$2y$12$Cx9BUsGrhHRQpchcbB4vgOz9pchRxw5kbHJGw0MoiGEMwx5czhvtC', 'admin', NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -350,7 +362,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `riwayatpeminjaman`
