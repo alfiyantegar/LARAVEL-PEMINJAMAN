@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserResource;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -28,7 +28,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // Hash password
+            'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);
 
@@ -36,39 +36,30 @@ class UserController extends Controller
     }
 
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    // Mencari pengguna berdasarkan email
-    $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-    if (!$user) {
-        return response()->json(['error' => 'User not found'], 404); // Logika jika pengguna tidak ditemukan
-    }
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-    // Cek jika password cocok
-    if (Hash::check($request->password, $user->password)) {
-        // Membuat token untuk pengguna
         $token = $user->createToken('MyAppToken')->plainTextToken;
 
-        // Mengembalikan token dan data pengguna sebagai respons
         return response()->json([
             'token' => $token,
             'user' => new UserResource($user),
         ], 200);
     }
 
-    return response()->json(['error' => 'Unauthorized'], 401);
-}
-
-
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logged out successfully']);
+        return response()->json(['message' => 'Logged out successfully'], 200);
     }
 
     public function show(User $user)
@@ -84,7 +75,7 @@ class UserController extends Controller
             'role' => 'in:admin,user',
         ]);
 
-        $user->update($request->all());
+        $user->update($request->only(['name', 'email', 'role']));
 
         return response()->json(new UserResource($user), 200);
     }
