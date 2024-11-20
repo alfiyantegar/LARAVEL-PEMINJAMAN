@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserResource;
 use Illuminate\Validation\ValidationException;
 
@@ -28,7 +27,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password, // Tidak menggunakan Hash::make
             'role' => $request->role,
         ]);
 
@@ -44,7 +43,8 @@ class UserController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        // Tidak menggunakan Hash::check
+        if (!$user || $user->password !== $request->password) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -58,7 +58,10 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        if ($request->user() && $request->user()->currentAccessToken()) {
+            $request->user()->currentAccessToken()->delete();
+        }
+
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
 
