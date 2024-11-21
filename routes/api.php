@@ -10,14 +10,10 @@ use App\Http\Controllers\Api\RiwayatPeminjamanController;
 
 // Rute login (gunakan hanya POST) dan beri nama 'login'
 Route::post('/login', [UserController::class, 'login'])->name('login');
+Route::get('/login', [UserController::class, 'login'])->name('login');
+Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
-// Grup rute yang memerlukan autentikasi
-Route::middleware('auth:sanctum')->group(function () {
-    // Rute logout
-    Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
-    // API resources yang memerlukan autentikasi
-    Route::apiResource('/user', UserController::class);
-    Route::apiResource('/daftarbarang', DaftarBarangController::class);
-    Route::apiResource('/riwayatpeminjaman', RiwayatPeminjamanController::class);
-});
+Route::apiResource('/user', UserController::class);
+Route::apiResource('/daftarbarang', DaftarBarangController::class);
+Route::apiResource('/riwayatpeminjaman', RiwayatPeminjamanController::class);
