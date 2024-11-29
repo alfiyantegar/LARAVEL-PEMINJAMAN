@@ -19,7 +19,6 @@ class DaftarBarang extends Model
         'description',
         'photo',
         'status',
-        'jumlah_barang',
     ];
 
     protected $casts = [

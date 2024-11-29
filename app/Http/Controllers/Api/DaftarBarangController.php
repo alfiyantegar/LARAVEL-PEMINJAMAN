@@ -8,6 +8,7 @@ use App\Models\DaftarBarang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class DaftarBarangController extends Controller
 {
@@ -33,12 +34,11 @@ class DaftarBarangController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
             'merk' => 'required|string|max:100',
-            'jenisbarang' => 'required|string|in:Printer,Scanner,PC Unit,Handphone',
+            'jenisbarang' => 'required|string|in:Printer,Scanner,PC Unit,Handphone,Kendaraan',
             'code' => 'required|string|max:50',
             'description' => 'nullable|string',
-            'photo' => 'nullable', // Dapat berupa URL atau file
-            'status' => 'required|string|in:Tersedia,Dipinjam',
-            'jumlah_barang' => 'required|integer|min:1',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048', // Validasi foto
+            'status' => 'nullable|string|in:Tersedia,Dipinjam,Diproses', // Status boleh kosong
         ]);
 
         if ($validator->fails()) {
@@ -48,16 +48,21 @@ class DaftarBarangController extends Controller
             ], 422);
         }
 
+        // Set default status 'Tersedia' jika tidak diberikan
+        $status = $request->input('status', 'Tersedia');
+
         // Proses photo (jika ada file upload)
         $data = $request->all();
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            // Simpan file ke storage dan ambil path-nya
             $path = $file->storeAs('photos', $filename, 'public');
             $data['photo'] = $path; // Simpan path ke database
         }
 
         // Simpan data
+        $data['status'] = $status; // Pastikan status sudah ter-set sebelum disimpan
         $barang = DaftarBarang::create($data);
 
         return response()->json([
@@ -87,12 +92,11 @@ class DaftarBarangController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:100',
             'merk' => 'sometimes|required|string|max:100',
-            'jenisbarang' => 'sometimes|required|string|in:Printer,Scanner,PC Unit,Handphone',
+            'jenisbarang' => 'sometimes|required|string|in:Printer,Scanner,PC Unit,Handphone,Kendaraan',
             'code' => 'sometimes|required|string|max:50',
             'description' => 'nullable|string',
-            'photo' => 'nullable',
-            'status' => 'sometimes|required|string|in:Tersedia,Dipinjam',
-            'jumlah_barang' => 'sometimes|required|integer|min:1',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048', // Validasi foto
+            'status' => 'sometimes|required|string|in:Tersedia,Dipinjam,Diproses',
         ]);
 
         if ($validator->fails()) {
@@ -105,8 +109,14 @@ class DaftarBarangController extends Controller
         // Proses photo jika diunggah
         $data = $request->all();
         if ($request->hasFile('photo')) {
+            // Hapus foto lama jika ada
+            if ($daftarBarang->photo) {
+                Storage::delete('public/' . $daftarBarang->photo);
+            }
+
             $file = $request->file('photo');
             $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            // Simpan file ke storage dan ambil path-nya
             $path = $file->storeAs('photos', $filename, 'public');
             $data['photo'] = $path;
         }
@@ -125,6 +135,11 @@ class DaftarBarangController extends Controller
      */
     public function destroy(DaftarBarang $daftarBarang)
     {
+        // Hapus foto barang jika ada
+        if ($daftarBarang->photo) {
+            Storage::delete('public/' . $daftarBarang->photo);
+        }
+
         $daftarBarang->delete();
 
         return response()->json([
@@ -133,3 +148,4 @@ class DaftarBarangController extends Controller
         ]);
     }
 }
+

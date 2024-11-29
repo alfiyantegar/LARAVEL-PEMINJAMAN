@@ -24,8 +24,7 @@ class DaftarBarangResource extends JsonResource
             'description' => $this->description, // Deskripsi barang
             'photo' => $this->photo, // URL foto barang
             'status' => $this->status, // Status barang (Tersedia, Terpinjam, dll.)
-            'jumlah_barang' => $this->jumlah_barang, // Jumlah barang
-            'created_at' => $this->created_at->toDateTimeString(), // Tanggal pembuatan
+            'created_at' => $this->created_at ? $this->created_at->toDateTimeString(): null, // Tanggal pembuatan
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null, // Tanggal pembaruan, jika ada
         ];
     }
