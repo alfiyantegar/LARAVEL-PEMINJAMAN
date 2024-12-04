@@ -130,6 +130,29 @@ class DaftarBarangController extends Controller
         ]);
     }
 
+    public function pinjam($idbarang)
+    {
+        $barang = DaftarBarang::find($idbarang);
+        if ($barang && $barang->status === 'Tersedia') {
+            $barang->status = 'Dipinjam';
+            $barang->save();
+            return response()->json(['message' => 'Barang berhasil dipinjam']);
+        }
+        return response()->json(['message' => 'Barang tidak tersedia'], 400);
+    }
+
+    public function kembalikan($idbarang)
+    {
+        $barang = DaftarBarang::find($idbarang);
+        if ($barang && $barang->status === 'Dipinjam') {
+            $barang->status = 'Tersedia';
+            $barang->save();
+            return response()->json(['message' => 'Barang berhasil dikembalikan']);
+        }
+        return response()->json(['message' => 'Barang tidak ditemukan atau tidak dipinjam'], 400);
+    }
+
+
     /**
      * Remove the specified resource from storage.
      */

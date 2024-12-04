@@ -48,10 +48,9 @@ class UserController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $token = $user->createToken('MyAppToken')->plainTextToken;
-
+        // Tidak menggunakan token autentikasi
         return response()->json([
-            'token' => $token,
+            'message' => 'Login berhasil',
             'user' => new UserResource($user),
             'role' => $user->role,
         ], 200);
@@ -59,11 +58,8 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
-        if ($request->user() && $request->user()->currentAccessToken()) {
-            $request->user()->currentAccessToken()->delete();
-        }
-
-        return response()->json(['message' => 'Logged out successfully'], 200);
+        // Tidak menggunakan token, logout tidak diperlukan
+        return response()->json(['message' => 'Logout berhasil'], 200);
     }
 
     public function show(User $user)
@@ -89,4 +85,27 @@ class UserController extends Controller
         $user->delete();
         return response()->json(null, 204);
     }
+
+    /**
+     * Mengambil data pengguna.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUser(Request $request)
+{
+    // Mengambil ID pengguna dari parameter body request
+    $userId = $request->input('user_id');  // Ambil user_id dari body request
+
+    // Mencari pengguna berdasarkan ID
+    $user = User::find($userId);
+
+    if ($user) {
+        return response()->json(['iduser' => $user->iduser], 200);  // Mengirimkan ID pengguna dalam response JSON
+    }
+
+    return response()->json(['message' => 'User not found'], 404);
 }
+
+
+}
+
