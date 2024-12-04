@@ -16,7 +16,7 @@ class RiwayatPeminjamanResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->idriwpen, // ID riwayat peminjaman
+            'idriwpen' => $this->idriwpen, // ID riwayat peminjaman
             'id_user' => $this->iduser, // ID pengguna
             'nama_user' => $this->user->username, // Nama pengguna (dari relasi user)
             'id_barang' => $this->idbarang, // ID barang yang dipinjam

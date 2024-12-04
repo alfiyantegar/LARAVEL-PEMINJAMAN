@@ -16,13 +16,13 @@ class DaftarBarangResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->idbarang, // ID barang
+            'idbarang' => $this->idbarang, // ID barang
             'name' => $this->name, // Nama barang
             'merk' => $this->merk, // Merek barang
             'jenis_barang' => $this->jenisbarang, // Jenis barang
             'code' => $this->code, // Kode barang
             'description' => $this->description, // Deskripsi barang
-            'photo' => $this->photo, // URL foto barang
+            'photo' => $this->photo ? asset('storage/' . $this->photo) : null,
             'status' => $this->status, // Status barang (Tersedia, Terpinjam, dll.)
             'created_at' => $this->created_at ? $this->created_at->toDateTimeString(): null, // Tanggal pembuatan
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null, // Tanggal pembaruan, jika ada

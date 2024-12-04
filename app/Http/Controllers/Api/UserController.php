@@ -53,6 +53,7 @@ class UserController extends Controller
         return response()->json([
             'token' => $token,
             'user' => new UserResource($user),
+            'role' => $user->role,
         ], 200);
     }
 

@@ -147,5 +147,27 @@ class DaftarBarangController extends Controller
             'message' => 'Barang deleted successfully.'
         ]);
     }
+    public function getItems()
+{
+    $items = DaftarBarang::select('jenisbarang')
+    ->groupBy('jenisbarang')
+    ->get()
+    ->map(function ($item) {
+        return [
+            'name' => $item->jenisbarang,
+            'unit' => DaftarBarang::where('jenisbarang', $item->jenisbarang)->count(),  // Menghitung jumlah barang
+            'borrowed' => DaftarBarang::where('jenisbarang', $item->jenisbarang)
+                ->where('status', 'Dipinjam')
+                ->count(),
+        ];
+    });
+
+
+    return response()->json([
+        'success' => true,
+        'data' => $items,
+        'message' => 'Items retrieved successfully.'
+    ]);
+}
 }
 
